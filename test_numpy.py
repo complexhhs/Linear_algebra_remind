@@ -27,7 +27,7 @@ def test_L_inverse():
         [2, 12, 1],
         [4, 15, 3]
     ])
-    L, U = LU_decomposition(A)
+    L, _ = LU_decomposition(A)
     L_ = L_inverse(L) 
     assert_array_equal(L@L_, np.eye(len(L)), "L inverse is wrong!")
 
