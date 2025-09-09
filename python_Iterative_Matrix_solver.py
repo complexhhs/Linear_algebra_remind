@@ -2,7 +2,7 @@
 import numpy as np
 import time
 
-from utils import max_norm, diag_inverse, LU_decomposition, L_inverse, LU_gauss_seidel
+from utils import max_norm, diag_inverse, L_inverse, LU_gauss_seidel
 
 def Jacobi(A, B, max_norm_tol=1e-15, max_iteration=1000):
     '''
