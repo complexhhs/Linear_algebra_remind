@@ -2,7 +2,78 @@
 import numpy as np
 import time
 
-from utils import max_norm, diag_inverse
+from utils import max_norm, diag_inverse, LU_decomposition, L_inverse, LU_gauss_seidel
+
+def Jacobi(A, B, max_norm_tol=1e-15, max_iteration=1000):
+    '''
+    Function for calculate Conjugate Gradient method for iterative matrix solver
+        "Ax = B"
+    Input arguments:
+        A: Size MxN matrix
+        B: Length "N" vector
+        max_norm_tol: Iterative method error tolerance(max_norm)
+        max_iteration: if iterative method failes, you have to stop unlimit loop
+    Output:
+        x: answer vector for linear system 
+        idx: the number of iterations
+    '''
+    assert len(A.shape) == 2, "A is not a rank 2 tensor, Give me a matrix!"
+    B = B.ravel()
+    assert len(B.shape) == 1, "B is not a rank 1 tensor, Give me a vector!"
+    M, N = A.shape
+    K = len(B)
+    assert N == K, f"Your Matrix and Vector are invalid for linear system. A({M}x{N}) vs B({K})"
+    x = np.ones_like(B)
+    
+    # make diag
+    D = np.zeros_like(A)
+    for i in range(min(M,N)):
+        D[i][i] = A[i][i]
+    R = A - D
+    D_ = diag_inverse(D)
+    res = A @ x - B
+    for idx in range(max_iteration):
+        if max_norm(res) / max_norm(x) <= max_norm_tol:
+            break
+        x_ =  D_ @ (B - (R @ x))
+        res = x_ - x
+        x = x_
+    return x, idx    
+
+def Gauss_Seidel(A, B, max_norm_tol=1e-15, max_iteration=1000):
+    '''
+    Function for calculate Conjugate Gradient method for iterative matrix solver
+        "Ax = B"
+    Input arguments:
+        A: Size MxN matrix
+        B: Length "N" vector
+        max_norm_tol: Iterative method error tolerance(max_norm)
+        max_iteration: if iterative method failes, you have to stop unlimit loop
+    Output:
+        x: answer vector for linear system 
+        idx: the number of iterations
+    '''
+    assert len(A.shape) == 2, "A is not a rank 2 tensor, Give me a matrix!"
+    B = B.ravel()
+    assert len(B.shape) == 1, "B is not a rank 1 tensor, Give me a vector!"
+    M, N = A.shape
+    K = len(B)
+    assert N == K, f"Your Matrix and Vector are invalid for linear system. A({M}x{N}) vs B({K})"
+    x = np.ones_like(B)
+
+    # LU decomposition
+    L, U = LU_gauss_seidel(A)
+    L_= L_inverse(L)
+    res = A @ x - B
+    for idx in range(max_iteration):
+        if max_norm(res) / max_norm(x) <= max_norm_tol:
+            break
+        x_ =  L_ @ (B - (U @ x))
+        res = x_ - x
+        x = x_
+    return x, idx    
+    
+
 
 def Conjugate_Gradient(A, B, max_norm_tol=1e-15, max_iteration=1000):
     '''
@@ -28,7 +99,7 @@ def Conjugate_Gradient(A, B, max_norm_tol=1e-15, max_iteration=1000):
     res = B - A@x # Matrix multiplication method would be updated for faster method
     v = res
     for idx in range(max_iteration):
-        if max_norm(res) <= max_norm_tol:
+        if max_norm(res) / max_norm(x) <= max_norm_tol:
             break
         t = (res.T @ res) / (v.T @ ((A @ v)))
         x = x + t*v
@@ -52,6 +123,7 @@ def Preconditioned_Conjugate_Gradient(A, B, max_norm_tol=1e-15, max_iteration=10
         x: answer vector for linear system 
         idx: the number of iterations
     '''
+    
     assert len(A.shape) == 2, "A is not a rank 2 tensor, Give me a matrix!"
     B = B.ravel()
     assert len(B.shape) == 1, "B is not a rank 1 tensor, Give me a vector!"
@@ -70,7 +142,7 @@ def Preconditioned_Conjugate_Gradient(A, B, max_norm_tol=1e-15, max_iteration=10
     w = C_ @ res
     v = C_.T @ w
     for idx in range(max_iteration):
-        if max_norm(res) <= max_norm_tol:
+        if max_norm(res) / max_norm(x) <= max_norm_tol:
             break
         t = w.T @ w / (v @ (A @ v))
         x = x + t*v
@@ -99,6 +171,24 @@ if __name__ == "__main__":
          0.01062616286
          ]
     )
+    
+    start_time = time.time()
+    X, iCG = Jacobi(A, B)
+    end_time = time.time()
+    CG_norm = max_norm(X-X_expected)
+    print(f"Jacobi's solution: {X}")
+    print(f'Iteration for Jacobi method: {iCG}, max_norm: {CG_norm},\
+        {end_time - start_time} second elapsed.')
+    print('')
+    
+    start_time = time.time()
+    X, iCG = Gauss_Seidel(A, B)
+    end_time = time.time()
+    CG_norm = max_norm(X-X_expected)
+    print(f"Gauss-Seidal's solution: {X}")
+    print(f'Iteration for Gauss-Seidal method: {iCG}, max_norm: {CG_norm},\
+        {end_time - start_time} second elapsed.')
+    print('')
     
     #X, iCG = Conjugate_Gradient(A, B, max_iteration=10)
     start_time = time.time()
