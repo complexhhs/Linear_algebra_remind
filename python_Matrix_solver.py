@@ -1,7 +1,8 @@
 # This example from https://math.gsu.edu/xye/course/na_handout/slides/mtx.pdf
-from utils import max_norm, diag_inverse
 import numpy as np
 import time
+
+from utils import max_norm, diag_inverse
 
 def Conjugate_Gradient(A, B, max_norm_tol=1e-15, max_iteration=1000):
     '''
@@ -105,7 +106,8 @@ if __name__ == "__main__":
     end_time = time.time()
     CG_norm = max_norm(X-X_expected)
     print(f"CG's solution: {X}")
-    print(f'Iteration for Conjugate Gradient method: {iCG}, max_norm: {CG_norm}, {end_time - start_time} second elapsed.')
+    print(f'Iteration for Conjugate Gradient method: {iCG}, max_norm: {CG_norm},\
+        {end_time - start_time} second elapsed.')
     print('')
     
     start_time = time.time()
@@ -113,5 +115,6 @@ if __name__ == "__main__":
     end_time = time.time()
     CG_norm = max_norm(X-X_expected)
     print(f"Preconditioned CG's solution: {X}")
-    print(f'Iteration for Preconditioned Conjugate Gradient method: {iCG}, max_norm: {CG_norm}, {end_time - start_time} second elapsed.')
+    print(f'Iteration for Preconditioned Conjugate Gradient method: {iCG}, max_norm: {CG_norm},\
+        {end_time - start_time} second elapsed.')
     
