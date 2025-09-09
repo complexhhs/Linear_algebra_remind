@@ -1,5 +1,5 @@
 # This example from https://math.gsu.edu/xye/course/na_handout/slides/mtx.pdf
-from utils import *
+from utils import max_norm, diag_inverse
 import numpy as np
 import time
 
