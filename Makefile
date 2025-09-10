@@ -7,7 +7,7 @@ test:
 
 
 format:
-	black *.py
+	black python_sector/*.py
 
 lint:
 	pylint --disable=R,C,redefined-outer-name python_sector/*.py
