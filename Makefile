@@ -3,13 +3,13 @@ install:
 		pip install -r requirements.txt
 
 test:
-	python -m pytest *.py
+	python -m pytest python_sector/*.py
 
 
 format:
 	black *.py
 
 lint:
-	pylint --disable=R,C,redefined-outer-name *.py
+	pylint --disable=R,C,redefined-outer-name python_sector/*.py
 
 all: install lint test format
