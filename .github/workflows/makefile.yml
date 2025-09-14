@@ -1,10 +1,10 @@
-name: Python application test with Github Actions
+name: Github Actions, Python and C++
 
 on: [push]
 
 jobs:
-  build:
-  
+  # Python checks - pylint + pytest
+  python_build:
     runs-on: ubuntu-latest
     
     steps:
@@ -25,3 +25,20 @@ jobs:
     - name: Format code
       run: |
         make format
+
+  # C++ checks (clang-dity + cppcheck)
+  cpp_build:
+    runs-on: ubuntu-latest
+
+    steps:
+    -uses: actions/checkout@v2
+    -name: Install clang-dity and cpp check
+      run: sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck
+
+    #-name: Run clang-tidy
+    #  run: clang-tidy cpp_sector/*.cpp -- -std=c++17
+
+    #-name: Run cppcheck
+    # run: cppcheck --enable=all --inconclusive --errror-exitcode=1 cpp_sector/
+
+  
