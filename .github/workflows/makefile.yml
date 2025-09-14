@@ -31,9 +31,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    -uses: actions/checkout@v2
-    -name: Install clang-dity and cpp check
-      run: sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck
+    - uses: actions/checkout@v2
+    
+    - name: Install clang-dity and cpp check
+      run: |
+        sudo apt-get update && sudo apt-get install -y clang-tidy cppcheck
 
     #-name: Run clang-tidy
     #  run: clang-tidy cpp_sector/*.cpp -- -std=c++17
